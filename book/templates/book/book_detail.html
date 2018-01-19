@@ -1,0 +1,18 @@
+{% extends 'book/base.html' %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <h1>Book</h1>
+    <form method="POST" class="book-form">{% csrf_token %}
+      <fieldset disabled="disabled">
+        {{ form.as_p }}
+      </fieldset>
+      {% if read is False %}
+      <!-- IZ NEKOG RAZLOGA OVO RADI SAMO AKO SE KLIKNE BAS NA TEKST NA DUGMETU -->
+      <p>IZ NEKOG RAZLOGA OVO RADI SAMO AKO SE KLIKNE BAS NA TEKST NA DUGMETU</p>
+        <button type="submit"><a href="{% url 'book_like' idb=book.id %}">Like  </a><span class="glyphicon glyphicon-thumbs-up"></span></button>
+        <button type="submit"><a href="{% url 'book_dislike' idb=book.id %}">Disike  </a><span class="glyphicon glyphicon-thumbs-down"></span></button>
+      {% endif %}
+    </form>
+  {% endif %}
+{% endblock %}

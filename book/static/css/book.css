@@ -1,0 +1,78 @@
+.page-header {
+    background-image: url("books3.jpg");
+    /*background-color: #ff9400;*/
+    margin-top: 0;
+    padding: 20px 0px 20px 60px;
+}
+
+.page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
+    color: #ffffff;
+    font-size: 36pt;
+    text-decoration: none;
+    font-family: "Lobster", cursive;
+}
+
+.content {
+    margin-left: 40px;
+}
+
+h1, h2, h3, h4 {
+    font-family: "Lobster", cursive;
+    color: #ff9400
+    padding-top: 10px;
+    padding-right: 0px;
+    padding-bottom: 10px;
+    padding-left: 0px;
+    width: 1200px;
+}
+
+a {
+    font-family: 'Lobster', cursive;
+    color: #000000
+}
+
+table {
+  background-image: url("wood.jpg");
+  color: #ffffff;
+  font-family: 'Lobster', cursive;
+  font-size: 10pt;
+  padding-top: 30px;
+  padding-right: 0px;
+  padding-bottom: 30px;
+  padding-left: 0px;
+  width: 1200px;
+}
+
+td {
+    padding-top: 30px;
+    padding-right: 10px;
+    padding-bottom: 30px;
+    padding-left: 10px;
+}
+
+.date {
+    color: #828282;
+}
+
+.save {
+    float: right;
+}
+
+.post-form textarea, .post-form input {
+    width: 100%;
+}
+
+.top-menu, .top-menu:hover, .top-menu:visited {
+    color: #ffffff;
+    float: right;
+    font-size: 26pt;
+    margin-right: 0px;
+}
+
+.post {
+    margin-bottom: 10px;
+}
+
+.post h1 a, .post h1 a:visited {
+    color: #000000;
+}

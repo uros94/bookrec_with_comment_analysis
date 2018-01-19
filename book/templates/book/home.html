@@ -1,0 +1,27 @@
+{% extends 'book/base.html' %}
+
+{% block content %}
+  <h2><p>Hello {{profile.user.username}},</p>
+      <p>Can we interest you with some interesting books?</p></h2>
+        <div>
+          <h1><a href="{% url 'recommend'%}"><button type="submit">{{ "Recommend me a book" }}</button></a></h1>
+        </div>
+        {% if recBooks %}
+          {% for book in recBooks %}
+              <p>{{book}}</p>
+          {% endfor %}
+        {% endif %}
+        <hr>
+        <h2><p>Looking for more info about some specific book or just want to rate a book that you have already read? Use our search engine to find it.</p></h2>
+        <form name="myform" method="GET" action="">
+            <input type="text" name="search" placeholder="Search" value='{{request.GET.search}}' />
+            <input type="submit" value="Search" />
+        </form>
+        {% if books %}
+          {% for book in books %}
+              <a href="{% url 'book_detail' idb=book.id %}"><p>{{book}}</p></a>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+{% endblock %}

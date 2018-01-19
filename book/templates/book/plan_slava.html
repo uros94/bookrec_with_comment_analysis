@@ -1,0 +1,17 @@
+{% extends 'slava/base.html' %}
+
+{% block content %}
+<h1>Guests list</h1>
+  {% for guest in guests %}
+    <div>
+      <p>Guest info: {{ guest }}</p>
+    </div>
+  {% endfor %}
+  <div>
+    <h1>Table arangments</h1>
+    <h3>Slava Planner 2000 has made a perfect sitting arangments for you. Out of {{permutations}} possible sitting permutations we have provided you with best solution.</h3>
+  </div>
+    <div id="table">
+      {{ guestsFinal | safe }}
+    </div>
+{% endblock %}
