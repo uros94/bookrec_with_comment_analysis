@@ -4,21 +4,26 @@ from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 from .models import Profile, Term, Book
 
+### NAPOMENA: svaki put kad menjas nesto, prekini izvrsavanje Celery, pa pokreni opet da bi prepoznao izmene!!!
 from celery import shared_task
 
 ##### recommendation
 @shared_task
 def recommendBooks(user1):
+    print("\nrecomendation start!!!")
     booksColl = recommendBooksColl(user1)
+    print("\ncollaborative: "+ str(booksColl))
     booksCont = recommendBooksCont(user1)
+    print("\ncontent: "+ str(booksCont))
     rec = []
     #intersect
     for b1 in booksColl:
         if b1 in booksCont:
             rec.append(b1)
+    ### OVO RADI SAMO CESTO JE PRESEK PRAZAN SKUP, TAKO DA SAM ZAKOMENTARISAO
     #if intersection is not empty list
-    if rec:
-        return rec
+    #if rec:
+    #    return rec
     #if it is empty than use union
     rec = booksCont
     for b2 in booksColl:
@@ -28,7 +33,8 @@ def recommendBooks(user1):
     #add new ones
     for book in rec:
         user1.recommendedBooks.add(book)
-    return
+    print("\nreccomended: "+ str(rec))
+    return rec
 
 ##### content filtering
 @shared_task
@@ -49,8 +55,9 @@ def recommendBooksCont(user1):
     #note that I have used only top 4 terms
     topTerms = topTerms[0:4]
     allBooks = list(Book.objects.all())
-    allBooksuser1 = list(user1.likedBooks.all()).extend(list(user1.dislikedBooks.all()))
-    #x =list(user1.readBooks.all()) - raed books
+    """ moved to views.home"""
+    allBooksuser1 = list(user1.likedBooks.all())
+    allBooksuser1.extend(list(user1.dislikedBooks.all()))
     if allBooksuser1:
         for book in allBooksuser1:
             allBooks.remove(book)
@@ -71,10 +78,11 @@ def recommendBooksColl(user1):
     for book in recBooks:
         if recBooks.count(book)>1:
             recBooks.remove(book)
-    x = list(user1.likedBooks.all())
-    x.extend(list(user1.dislikedBooks.all()))
-    if x:
-        for book in x:
+    """ moved to views.home"""
+    allBooksuser1 = list(user1.likedBooks.all())
+    allBooksuser1.extend(list(user1.dislikedBooks.all()))
+    if allBooksuser1:
+        for book in allBooksuser1:
             if book in recBooks:
                 recBooks.remove(book)
     return recBooks

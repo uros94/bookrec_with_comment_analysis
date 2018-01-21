@@ -23,27 +23,33 @@ def signup(request):
 
 def home(request):
     profile = Profile.objects.get(user=request.user)
-    recBooks = profile.recommendedBooks.all()
+    recBooks = list(profile.recommendedBooks.all())
+    # remove already read books from recBooks
+    allBooksuser1 = list(profile.likedBooks.all())
+    allBooksuser1.extend(list(profile.dislikedBooks.all()))
+    if allBooksuser1:
+        for book in allBooksuser1:
+            if book in recBooks:
+                recBooks.remove(book)
     books=Book.objects.all()
+
     query = request.GET.get("search")
     if query:
         books=books.filter(Q(title__icontains=query) | Q(author__icontains=query)).distinct()
-    return render(request, 'book/home.html', {'profile': profile, 'recBooks': recBooks, 'books': books})
+    return render(request, 'book/home.html', {'profile': profile, 'recBooks': recBooks[0:6], 'books': books})
 
-def recommend(request):
-    recommendBooks.delay(request.user.profile) #run by celery
-    return redirect('home')
 
 def book_detail(request, idb):
     book = get_object_or_404(Book, id=idb)
     read = False
     if request.method == "POST":
-        form = BookForm(request.POST, instance=book)
+        form = BookForm(request.POST, request.FILES or None, instance=book)
     else:
         form = BookForm(instance=book)
-    x = list(request.user.profile.likedBooks.all()).extend(list(request.user.profile.dislikedBooks.all()))
-    if x:
-        read = book in x
+    allBooksuser1 = list(request.user.profile.likedBooks.all())
+    allBooksuser1.extend(list(request.user.profile.dislikedBooks.all()))
+    if allBooksuser1:
+        read = book in allBooksuser1
     return render(request, 'book/book_detail.html', {'form': form, 'book': book, 'read': read})
 
 def book_like(request, idb):
@@ -52,6 +58,7 @@ def book_like(request, idb):
     updateTerms.delay(request.user.profile,object.genre, 1.0) #run by celery
     updateTerms.delay(request.user.profile,object.language, 0.2) #run by celery
     request.user.profile.likedBooks.add(object)
+    recommendBooks.delay(request.user.profile) #run by celery
     return redirect('home')
 
 def book_dislike(request, idb):
@@ -60,4 +67,5 @@ def book_dislike(request, idb):
     updateTerms.delay(request.user.profile,object.genre, -1.0) #run by celery
     updateTerms.delay(request.user.profile,object.language, -0.2) #run by celery
     request.user.profile.dislikedBooks.add(object)
+    recommendBooks.delay(request.user.profile) #run by celery
     return redirect('home')
