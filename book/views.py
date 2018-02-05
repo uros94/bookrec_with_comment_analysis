@@ -24,7 +24,6 @@ def signup(request):
 def home(request):
     profile = Profile.objects.get(user=request.user)
     recBooks = list(profile.recommendedBooks.all())
-    # remove already read books from recBooks
     allBooksuser1 = list(profile.likedBooks.all())
     allBooksuser1.extend(list(profile.dislikedBooks.all()))
     if allBooksuser1:
@@ -32,7 +31,6 @@ def home(request):
             if book in recBooks:
                 recBooks.remove(book)
     books=Book.objects.all()
-
     query = request.GET.get("search")
     if query:
         books=books.filter(Q(title__icontains=query) | Q(author__icontains=query)).distinct()
@@ -42,15 +40,11 @@ def home(request):
 def book_detail(request, idb):
     book = get_object_or_404(Book, id=idb)
     read = False
-    if request.method == "POST":
-        form = BookForm(request.POST, request.FILES or None, instance=book)
-    else:
-        form = BookForm(instance=book)
     allBooksuser1 = list(request.user.profile.likedBooks.all())
     allBooksuser1.extend(list(request.user.profile.dislikedBooks.all()))
     if allBooksuser1:
         read = book in allBooksuser1
-    return render(request, 'book/book_detail.html', {'form': form, 'book': book, 'read': read})
+    return render(request, 'book/book_detail.html', {'book': book, 'read': read})
 
 def book_like(request, idb):
     object = get_object_or_404(Book, id=idb)

@@ -8,7 +8,6 @@ import math
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     location = models.CharField(max_length=30, blank=True)
-    ##intrest vector is acctually represented as list of terms related to some Profile
     likedBooks = models.ManyToManyField(
         "Book",
         null=True,
@@ -56,7 +55,6 @@ class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=60)
     genre_list =  (
-    #ovo je naopako - zameni
         ('Classic','Classic'),
         ('Fiction','Fiction'),
         ('Romance','Romance'),
