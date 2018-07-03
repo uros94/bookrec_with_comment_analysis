@@ -8,7 +8,7 @@ import datetime
 from .forms import BookForm, CommentForm
 from .models import Profile, Term, Book, User, Comment
 #from .tasks import recommendBooks, updateTerms
-from .semantics import commentSemantics
+from . import commentSemantics
 #import semantic
 from django.http import HttpResponseRedirect
 
