@@ -1,0 +1,23 @@
+python -m venv myvenv
+
+cd site
+myvenv\Scripts\activate
+python manage.py runserver
+
+cd site
+myvenv\Scripts\activate
+celery -A mysite worker -l info
+
+django-admin.exe startproject mysite .
+
+cd C:\Program Files\MongoDB\Server\3.6\bin
+mongod --dbpath C:\data\db
+mongo
+
+python manage.py startapp blog
+python manage.py makemigrations 
+python manage.py migrate 
+
+pip install django~=1.11.0
+
+python manage.py createsuperuser

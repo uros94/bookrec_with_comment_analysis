@@ -1,0 +1,39 @@
+.page-header {
+    background-image: url("books3.jpg");
+    /*background-color: #ff9400;*/
+    margin-top: 0;
+    padding: 20px 20px 20px 20px;
+    color: #ffffff;
+}
+
+.page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
+    color: #ffffff;
+    font-size: 42pt;
+    text-decoration: none;
+    font-family: "Lobster", cursive;
+    -webkit-text-fill-color: white; /* Will override color (regardless of order) */
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+}
+
+.content {
+  margin-left: 40px;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4 {
+    font-family: "Lobster", cursive;
+    color: #000000;
+    font-size: 250%;
+}
+
+a {
+    font-family: 'Lobster', cursive;
+    color: #000000
+}
+
+button {
+    font-family: "Lobster", cursive;
+    color: #000000;
+    font-size: 120%;
+}

@@ -4,8 +4,10 @@ from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 from .models import Profile, Term, Book
 
+### NAPOMENA: svaki put kad menjas nesto, prekini izvrsavanje Celery, pa pokreni opet da bi prepoznao izmene!!!
 from celery import shared_task
 
+##### recommendation
 @shared_task
 def recommendBooks(user1):
     print("\nrecomendation start!!!")
@@ -14,21 +16,27 @@ def recommendBooks(user1):
     booksCont = recommendBooksCont(user1)
     print("\ncontent: "+ str(booksCont))
     rec = []
-    for b1 in booksColl:
+    ### OVO RADI SAMO CESTO JE PRESEK PRAZAN SKUP, TAKO DA SAM ZAKOMENTARISAO
+    ##intersect
+    """for b1 in booksColl:
         if b1 in booksCont:
-            rec.append(b1)
-    if rec:
-        return rec
+            rec.append(b1)"""
+    ##if intersection is not empty list
+    """if rec:
+        return rec"""
+    ##if it is empty than use union
     rec = booksCont
     for b2 in booksColl:
         if rec.count(b2)==0:
             rec.append(b2)
     user1.recommendedBooks.clear()
+    #add new ones
     for book in rec:
         user1.recommendedBooks.add(book)
     print("\nreccomended: "+ str(rec))
     return rec
 
+##### content filtering
 @shared_task
 def updateTerms(user1, term, newValue):
     termOld = Term.objects.filter(user=user1)#ovde moze da se upotrebi Q biblioteka
@@ -44,8 +52,10 @@ def updateTerms(user1, term, newValue):
 def recommendBooksCont(user1):
     topTerms = list(Term.objects.filter(user=user1))
     topTerms.sort(key=lambda x: x.value, reverse=True)
+    #note that I have used only top 4 terms
     topTerms = topTerms[0:4]
     allBooks = list(Book.objects.all())
+    """ moved to views.home"""
     allBooksuser1 = list(user1.likedBooks.all())
     allBooksuser1.extend(list(user1.dislikedBooks.all()))
     if allBooksuser1:
@@ -59,6 +69,7 @@ def recommendBooksCont(user1):
                 allBooks.remove(book)
     return recBooks
 
+##### collaborative filtering
 def recommendBooksColl(user1):
     updateSimilarUsers(user1)
     recBooks = []
@@ -67,6 +78,7 @@ def recommendBooksColl(user1):
     for book in recBooks:
         if recBooks.count(book)>1:
             recBooks.remove(book)
+    """ moved to views.home"""
     allBooksuser1 = list(user1.likedBooks.all())
     allBooksuser1.extend(list(user1.dislikedBooks.all()))
     if allBooksuser1:
@@ -75,8 +87,9 @@ def recommendBooksColl(user1):
                 recBooks.remove(book)
     return recBooks
 
-def updateSimilarUsers(user1):
+def updateSimilarUsers(user1):#this could also be used asyc
     allUsers = Profile.objects.all()
+    #first element is value of pearson coef and second is user
     similarity = [[]*2 for i in range(len(allUsers)-1)]
     i=0
     for u in allUsers:
@@ -87,14 +100,18 @@ def updateSimilarUsers(user1):
             similarity[i].append(u)
             i=i+1
     similarity.sort(key=lambda x: x[0], reverse=True)
+    #remove old similarities
     user1.similarUsers.clear()
+    #add new ones -- note that I have used only top 4 most similar users
     for newSimilarUser in similarity[0:4]:
         user1.similarUsers.add(newSimilarUser[1])
     return
 
+#find common terms and return two lists of values of those terms for both user1 and otherUser
 def commonTerms(user1,otherProfile):
     terms1stUser = Term.objects.filter(user=user1)
     terms2ndUser = Term.objects.filter(user=otherProfile)
+    #first list is for values of sefl and second for term values of otherUser
     commonTermsValues = [[]*(len(terms1stUser)) for i in range(2)]
     for t1 in terms1stUser:
         for t2 in terms2ndUser:
